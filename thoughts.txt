@@ -1,0 +1,17 @@
+How do I want to improve my API for version 2?
+
+    1. nested resources for language, city/county, district(need more models?)
+        like: api/v1/{language}/{city/county}/{id}
+
+        Can have urls like: 
+            - api/v2 -> get all vet clinics in Chinese and English
+            - api/v2/en -> get all vet clinics in English
+            - api/v2/zh -> get all vet clinics in Chinese
+            - api/v2/{language}/{id} -> get single vet clinic
+            - api/v2/{language}/{city/county}/{id}
+        
+        Models: 
+            1. VetClinicsEN -> store English info
+            2. VetClinicsZH -> store Chinese info
+
+    2. deploy version 1 on server, so JS frontend can interact with my API(not sure how to do it, can it be free?)
