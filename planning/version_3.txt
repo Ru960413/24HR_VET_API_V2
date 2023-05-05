@@ -2,3 +2,4 @@ Things I want to improve for version 3:
 1. add authentication (API key or JWT)
 2. render success/error message
 3. add patch method
+4. allow CORS
