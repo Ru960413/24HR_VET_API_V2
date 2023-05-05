@@ -136,7 +136,6 @@ class ClinicEN(Resource):
         clinic = VetClinicsEN.query.filter_by(id=pk).first()
         return clinic
 
-
     # update vet clinic info (en): DONE
     @marshal_with(clinicFieldsEN)
     def put(self, pk):
@@ -154,7 +153,6 @@ class ClinicEN(Resource):
 
         return clinic
 
-    
     # delete vet clinic info (en): DONE
     @marshal_with(clinicFieldsEN)
     def delete(self, pk):
@@ -167,7 +165,6 @@ class ClinicEN(Resource):
 
 
 class ClinicZH(Resource):
-
     # get single vet clinic's info (zh): DONE
     @marshal_with(clinicFieldsZH)
     def get(self, pk):
@@ -175,7 +172,7 @@ class ClinicZH(Resource):
         return clinic
 
 
-    # delete vet clinic info (zh): DONE
+     # delete vet clinic info (zh): DONE
     @marshal_with(clinicFieldsZH)
     def delete(self, pk):
         clinic = VetClinicsZH.query.filter_by(id=pk).first()
@@ -225,7 +222,7 @@ class ClinicFromLocationEN(Resource):
     def get(self, search_location, pk):
         clinic = VetClinicsEN.query.filter_by(location=search_location, id=pk).first()
         return clinic
-    
+
     # update vet clinic info (en): DONE
     @marshal_with(clinicFieldsEN)
     def put(self, search_location, pk):
@@ -243,7 +240,6 @@ class ClinicFromLocationEN(Resource):
 
         return clinic
 
-    
     # delete vet clinic info (en): DONE
     @marshal_with(clinicFieldsEN)
     def delete(self, search_location, pk):
@@ -261,11 +257,11 @@ class ClinicFromLocationZH(Resource):
     def get(self, search_location, pk):
         clinic = VetClinicsZH.query.filter_by(location=search_location, id=pk).first()
         return clinic
-    
-     # delete vet clinic info (zh): DONE
+
+    # delete vet clinic info (zh): DONE
     @marshal_with(clinicFieldsZH)
     def delete(self, search_location, pk):
-        clinic = VetClinicsZH.query.filter_by(location=search_location,id=pk).first()
+        clinic = VetClinicsZH.query.filter_by(location=search_location, id=pk).first()
         db.session.delete(clinic)
         db.session.commit()
 
