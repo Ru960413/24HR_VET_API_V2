@@ -1,10 +1,12 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, marshal_with, fields
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///vetClinics.db"
 db = SQLAlchemy(app)
