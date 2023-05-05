@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, marshal_with, fields
 from flask_sqlalchemy import SQLAlchemy
-import sys
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -10,6 +10,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///vetClinics.db"
 db = SQLAlchemy(app)
 
 
+# Store all the clinics' info in English
 class VetClinicsEN(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -25,6 +26,7 @@ class VetClinicsEN(db.Model):
         return self.name
 
 
+# Store all the clinics' info in Chinese
 class VetClinicsZH(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -66,12 +68,13 @@ clinicFieldsZH = {
 
 
 class ClinicsEN(Resource):
-    # DONE
+    # get all the vet clinic (en): DONE
     @marshal_with(clinicFieldsEN)
     def get(self):
         all_clinics_en = VetClinicsEN.query.all()
         return all_clinics_en
 
+    # add new vet clinic (en): DONE
     @marshal_with(clinicFieldsEN)
     def post(self):
         data = request.json
@@ -95,12 +98,13 @@ class ClinicsEN(Resource):
 
 
 class ClinicsZH(Resource):
-    # DONE
+    # get all the vet clinic (zh): DONE
     @marshal_with(clinicFieldsZH)
     def get(self):
         all_clinics_en = VetClinicsZH.query.all()
         return all_clinics_en
 
+    # add new vet clinic (zh): DONE
     # ISSUE: works fine, but it showed Chinese as ascii code...
     @marshal_with(clinicFieldsZH)
     def post(self):
@@ -126,14 +130,14 @@ class ClinicsZH(Resource):
 
 # DONE
 class ClinicEN(Resource):
-    # For getting a vet clinic's info
+    # get single vet clinic's info (en): DONE
     @marshal_with(clinicFieldsEN)
     def get(self, pk):
         clinic = VetClinicsEN.query.filter_by(id=pk).first()
         return clinic
 
-    # DONE
-    # For updating vet clinic info
+
+    # update vet clinic info (en): DONE
     @marshal_with(clinicFieldsEN)
     def put(self, pk):
         data = request.json
@@ -150,8 +154,8 @@ class ClinicEN(Resource):
 
         return clinic
 
-    # DONE
-    # For deleting vet clinic info
+    
+    # delete vet clinic info (en): DONE
     @marshal_with(clinicFieldsEN)
     def delete(self, pk):
         clinic = VetClinicsEN.query.filter_by(id=pk).first()
@@ -163,15 +167,15 @@ class ClinicEN(Resource):
 
 
 class ClinicZH(Resource):
-    # DONE
-    # For getting a vet clinic's info
+
+    # get single vet clinic's info (zh): DONE
     @marshal_with(clinicFieldsZH)
     def get(self, pk):
         clinic = VetClinicsZH.query.filter_by(id=pk).first()
         return clinic
 
-    # DONE
-    # For deleting vet clinic info
+
+    # delete vet clinic info (zh): DONE
     @marshal_with(clinicFieldsZH)
     def delete(self, pk):
         clinic = VetClinicsZH.query.filter_by(id=pk).first()
@@ -180,8 +184,8 @@ class ClinicZH(Resource):
 
         clinics = VetClinicsZH.query.all()
         return clinics
-    
-    # DONE
+
+    # update vet clinic info (zh): DONE
     @marshal_with(clinicFieldsZH)
     def put(self, pk):
         data = request.json
@@ -199,27 +203,101 @@ class ClinicZH(Resource):
         return clinic
 
 
-class ClinicsLocationEN(Resource):
-    pass
-    # @marshal_with(clinicFieldsEN)
-    # def get(self, location, pk):
-
-    #     clinic = VetClinicsEN.query.filter_by(id=pk, location=location).first()
-    #     return clinic
-
-
-class ClinicsLocationZH(Resource):
-    pass
+class ClinicsFromLocationEN(Resource):
+    # get all vet clinics according to search location (en): DONE
+    @marshal_with(clinicFieldsEN)
+    def get(self, search_location):
+        clinics = VetClinicsEN.query.filter_by(location=search_location).all()
+        return clinics
 
 
-api.add_resource(ClinicsEN, "/api/v2/en")
-api.add_resource(ClinicsZH, "/api/v2/zh")
-api.add_resource(ClinicEN, "/api/v2/en/<int:pk>")
-api.add_resource(ClinicZH, "/api/v2/zh/<int:pk>")
-# api.add_resource(ClinicsLocationEN, "/api/v2/en/<str: location>/")
-# api.add_resource(ClinicsLocationZH, "/api/v2/zh/{location}/")
-# api.add_resource(ClinicEN, "/api/v2/en/{location}/<int:pk>")
-# api.add_resource(ClinicZH, "/api/v2/zh/{location}/<int:pk>")
+class ClinicsFromLocationZH(Resource):
+    # get all vet clinics according to search location (zh): DONE
+    @marshal_with(clinicFieldsZH)
+    def get(self, search_location):
+        clinics = VetClinicsZH.query.filter_by(location=search_location).all()
+        return clinics
+
+
+class ClinicFromLocationEN(Resource):
+    # get single vet clinic according to search location and id (en): DONE
+    @marshal_with(clinicFieldsEN)
+    def get(self, search_location, pk):
+        clinic = VetClinicsEN.query.filter_by(location=search_location, id=pk).first()
+        return clinic
+    
+    # update vet clinic info (en): DONE
+    @marshal_with(clinicFieldsEN)
+    def put(self, search_location, pk):
+        data = request.json
+        clinic = VetClinicsEN.query.filter_by(location=search_location, id=pk).first()
+        clinic.name = data["name"]
+        clinic.address = data["address"]
+        clinic.location = data["location"]
+        clinic.website = data["website"]
+        clinic.note = data["note"]
+        clinic.phone = data["phone"]
+        clinic.lat = data["lat"]
+        clinic.lng = data["lng"]
+        db.session.commit()
+
+        return clinic
+
+    
+    # delete vet clinic info (en): DONE
+    @marshal_with(clinicFieldsEN)
+    def delete(self, search_location, pk):
+        clinic = VetClinicsEN.query.filter_by(location=search_location, id=pk).first()
+        db.session.delete(clinic)
+        db.session.commit()
+
+        clinics = VetClinicsEN.query.all()
+        return clinics
+
+
+class ClinicFromLocationZH(Resource):
+    # get single vet clinic according to search location and id (zh): DONE
+    @marshal_with(clinicFieldsZH)
+    def get(self, search_location, pk):
+        clinic = VetClinicsZH.query.filter_by(location=search_location, id=pk).first()
+        return clinic
+    
+     # delete vet clinic info (zh): DONE
+    @marshal_with(clinicFieldsZH)
+    def delete(self, search_location, pk):
+        clinic = VetClinicsZH.query.filter_by(location=search_location,id=pk).first()
+        db.session.delete(clinic)
+        db.session.commit()
+
+        clinics = VetClinicsZH.query.all()
+        return clinics
+
+    # update vet clinic info (zh): DONE
+    @marshal_with(clinicFieldsZH)
+    def put(self, search_location, pk):
+        data = request.json
+        clinic = VetClinicsZH.query.filter_by(location=search_location, id=pk).first()
+        clinic.name = data["name"]
+        clinic.address = data["address"]
+        clinic.location = data["location"]
+        clinic.website = data["website"]
+        clinic.note = data["note"]
+        clinic.phone = data["phone"]
+        clinic.lat = data["lat"]
+        clinic.lng = data["lng"]
+        db.session.commit()
+
+        return clinic
+
+
+api.add_resource(ClinicsEN, "/v2/clinics/en")
+api.add_resource(ClinicsZH, "/v2/clinics/zh")
+api.add_resource(ClinicEN, "/v2/clinics/en/<int:pk>")
+api.add_resource(ClinicZH, "/v2/clinics/zh/<int:pk>")
+api.add_resource(ClinicsFromLocationEN, "/v2/clinics/en/<search_location>")
+api.add_resource(ClinicsFromLocationZH, "/v2/clinics/zh/<search_location>/")
+api.add_resource(ClinicFromLocationEN, "/v2/clinics/en/<search_location>/<int:pk>")
+api.add_resource(ClinicFromLocationZH, "/v2/clinics/zh/<search_location>/<int:pk>")
 
 
 with app.app_context():
